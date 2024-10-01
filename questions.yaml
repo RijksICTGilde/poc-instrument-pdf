@@ -1,0 +1,18 @@
+personal_info:
+  full_name:
+  age:
+  email:
+education:
+  highest_degree:
+  major:
+  graduation_year:
+work_experience:
+  current_job_title:
+  years_of_experience:
+  company:
+skills:
+  programming_languages:
+  spoken_languages:
+additional_info:
+  hobbies:
+  favorite_book:

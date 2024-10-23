@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import yaml
 from PyPDF2 import PdfReader
 import argparse

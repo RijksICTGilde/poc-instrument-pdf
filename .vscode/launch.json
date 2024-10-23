@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run generator",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${cwd}/generate.py",
+            "console": "integratedTerminal",
+            "args": [
+                "iama.yaml",
+                "iama.pdf"
+            ]
+        },
+        {
+            "name": "Run extractor",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${cwd}/extract.py",
+            "console": "integratedTerminal",
+            "args": [
+                "iama.pdf",
+                "iama.out.yaml"
+            ]
+        }
+    ]
+}

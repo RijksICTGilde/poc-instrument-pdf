@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import yaml
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter

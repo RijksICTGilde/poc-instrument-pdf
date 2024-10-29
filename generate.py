@@ -8,6 +8,9 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph
 from reportlab.lib.units import inch
 import argparse
+from pdfrw import PdfReader, PdfWriter, PageMerge, IndirectPdfDict, PdfName
+import os
+
 
 
 def create_paragraph(text, style, width):
@@ -63,7 +66,7 @@ def create_pdf_form(yaml_data, output_pdf):
         form.textfield(name=f"{urn}_remarks",
                        tooltip='Remarks',
                        x=margin, y=y - 40,
-                       width=text_width, height=30)
+                       width=text_width, height=30,)
         y -= 50
 
         # Add more fields as needed (timestamp, author, etc.)
@@ -75,6 +78,46 @@ def create_pdf_form(yaml_data, output_pdf):
             y = height - margin
 
     c.save()
+
+def add_js_to_pdf(input_pdf, output_pdf):
+    ANNOT_KEY = PdfName.Annots
+    ANNOT_FIELD_KEY = PdfName.T
+    ANNOT_JS_KEY = PdfName.AA
+    ANNOT_BLUR_KEY = PdfName.Bl
+
+
+    js_code = f"""
+    var targetField = this.getField("(urn:nl:aivt:ir:iama:1.0:1.2.1_answer)");
+    targetField.value = "This text is set on blur of the source field.";
+    """
+
+
+    js_action = IndirectPdfDict(
+        JS=js_code,
+        S=PdfName.JavaScript
+    )
+
+    pdf = PdfReader(input_pdf)
+    for page_number, page in enumerate(pdf.pages, 1):
+
+        if ANNOT_KEY not in page:
+            continue
+
+        annotations = page[ANNOT_KEY]
+        for annotation in annotations:
+            selection = annotation[ANNOT_FIELD_KEY]
+            print(selection)
+            if selection == '(urn:nl:aivt:ir:iama:1.0:1.1.1_answer)':
+                
+                print("hit", selection)
+                if ANNOT_JS_KEY not in annotation:
+                    annotation[ANNOT_JS_KEY] = IndirectPdfDict()
+
+                annotation[ANNOT_JS_KEY][ANNOT_BLUR_KEY] = js_action
+
+                print(annotation)
+
+    PdfWriter(output_pdf, trailer=pdf).write()
 
 
 def main():
@@ -88,7 +131,9 @@ def main():
         yaml_data = yaml.safe_load(file)
 
     # Create PDF form
-    create_pdf_form(yaml_data, args.output_pdf)
+    create_pdf_form(yaml_data, 'output.pdf')
+    add_js_to_pdf('output.pdf', args.output_pdf)
+    os.remove('output.pdf')
     print(f"PDF form created and saved to {args.output_pdf}")
 
 
